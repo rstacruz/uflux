@@ -55,14 +55,19 @@ App.emit('list:add')
 
 ```js
 const ListView = React.createClass({
-  ...
-  static getStores () {
-    return [ ListStore ]
-  }
+  statics: {
+    getStores () {
+      return [ ListStore ]
+    },
  
-  static getPropsFromStores() {
-    return ListStore.getState()
+    getPropsFromStores() {
+      return ListStore.getState()
+    }
+  },
+  render () {
+    return <div>hi, {this.props.name}</div>
   }
+
 })
 
 ListView = connectToStores(ListView)

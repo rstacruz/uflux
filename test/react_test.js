@@ -21,10 +21,6 @@ describe('React', function () {
 
     let View = React.createClass({
       statics: {
-        getPropsFromStores () {
-          return s.getState()
-        },
-
         getStores () {
           return [s]
         },
