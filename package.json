@@ -2,7 +2,8 @@
   "name": "flux-m",
   "version": "0.0.1",
   "description": "",
-  "main": "flux.js",
+  "main": "lib/index.js",
+  "browser": "dist/index.js",
   "scripts": {
     "test": "mocha",
     "build": "browserify -t [ babelify --stage 0 ] -s Fluxm lib/index.js -o dist/index.js",
