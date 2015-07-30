@@ -50,3 +50,11 @@ No actions, just emit directly on your main dispatcher.
 ```js
 App.emit('list:add')
 ```
+
+### React
+
+```js
+const ListView = React.createClass({
+  ...
+})
+```

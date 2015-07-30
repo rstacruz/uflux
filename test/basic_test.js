@@ -60,17 +60,42 @@ describe('Store', function () {
     d = new Dispatcher()
   })
 
-  it('works', function () {
+  beforeEach(function () {
     s = new Store(d, { name: 'store', ids: [] }, {
       'list:push': function (state, id) {
-        return { ...state, ids: state.ids.concat([id]) }
+        return { ...state, ids: state.ids.concat([ id ]) }
       }
     })
+  })
 
+  it('works', function () {
     d.emit('list:push', 1)
     d.emit('list:push', 2)
 
     expect(s.getState().name).toEqual('store')
+    expect(s.getState().ids).toEqual([ 1, 2 ])
+  })
+
+  it('emits a change event', function () {
+    s.on('change', function (state) {
+      expect(state).toEqual({ name: 'store', ids: [ 1 ]})
+    })
+    d.emit('list:push', 1)
+  })
+
+  it('waits', function () {
+    s.listen({
+      '1st-event': function (state) {
+        d.emit('2nd-event')
+        return { ...state, ids: state.ids.concat([ 1 ]) }
+      },
+
+      '2nd-event': function (state) {
+        return { ...state, ids: state.ids.concat([ 2 ]) }
+      }
+    })
+
+    d.emit('1st-event')
     expect(s.getState().ids).toEqual([ 1, 2 ])
   })
 })
