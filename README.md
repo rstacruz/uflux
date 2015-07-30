@@ -56,5 +56,12 @@ App.emit('list:add')
 ```js
 const ListView = React.createClass({
   ...
+  static getStores () {
+    return [ ListStore ]
+  }
+ 
+  static getPropsFromStores() {
+    return TodoStore.getState();
+  }
 })
 ```
