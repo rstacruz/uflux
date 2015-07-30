@@ -77,14 +77,14 @@ describe('Store', function () {
   })
 
   it('emits a change event', function () {
-    s.on('change', function (state) {
+    s.listen(function (state) {
       expect(state).toEqual({ name: 'store', ids: [ 1 ]})
     })
     d.emit('list:push', 1)
   })
 
   it('waits', function () {
-    s.listen({
+    s.observe({
       '1st-event': function (state) {
         d.emit('2nd-event')
         return { ...state, ids: state.ids.concat([ 1 ]) }

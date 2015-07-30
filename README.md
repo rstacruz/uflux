@@ -61,7 +61,9 @@ const ListView = React.createClass({
   }
  
   static getPropsFromStores() {
-    return TodoStore.getState();
+    return ListStore.getState()
   }
 })
+
+ListView = connectToStores(ListView)
 ```
