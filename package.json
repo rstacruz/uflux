@@ -5,10 +5,10 @@
   "main": "flux.js",
   "scripts": {
     "test": "mocha",
-    "build": "browserify -t [ babelify --stage 0 ] --node --bare --no-bundle-external lib/index.js -o dist/index.js",
+    "build": "browserify -t [ babelify --stage 0 ] -s Fluxm lib/index.js -o dist/index.js",
     "prepublish": "npm run build"
   },
-  "author": "Rico Sta. Cruz <hi@ricostacruz.com>",
+  "author": "Rico Sta. Cruz <rico@ricostacruz.com>",
   "license": "MIT",
   "dependencies": {
     "babel": "^5.8.12",
