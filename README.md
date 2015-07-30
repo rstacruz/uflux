@@ -11,7 +11,7 @@ Extremely minimalistic flux-like implementation. Inspired by alt, flummox, redux
 ### Require
 
 ```js
-import { Dispatcher, Store } from 'flux-m'
+import { Dispatcher, Store, connectToStores } from 'flux-m'
 ```
 
 ### Dispatcher
