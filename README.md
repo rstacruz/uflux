@@ -145,6 +145,8 @@ Unresolved API questions:
  * atomicity - is it possible?
  * can/should components listen to dispatch events?
  * is there a better function signature for new Store()?
+ * what about stores that need to interact with each other (say AuthenticationStore)?
+ * it should be possible to debounce store change events (eg, a chain of dispatch events that modify stores). but how?
  * ...post yours in [issues/](issues/)
 
 ## Disclaimer
