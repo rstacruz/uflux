@@ -103,16 +103,24 @@ describe('Store', function () {
     it('has .constructor', function () {
       expect(s.constructor).toBeA('function')
     })
-
-    it('has a __super__', function () {
-      expect(s.constructor.__super__).toEqual(Store)
-    })
   })
 
   describe('.extend()', function () {
     it('works', function () {
       s.extend({ hi () { return 'hello' } })
       expect(s.hi()).toEqual('hello')
+    })
+  })
+
+  describe('.dup()', function () {
+    it('works', function () {
+      let dd = new Dispatcher()
+      let ss = s.dup(dd)
+
+      dd.emit('list:push', 2)
+
+      expect(ss.getState().ids).toEqual([ 2 ])
+      expect(s.getState().ids).toEqual([])
     })
   })
 })

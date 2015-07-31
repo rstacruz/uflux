@@ -55,12 +55,20 @@ state—no mutation should be done here.
           .then((data) => { this.dispatcher.emit('item:fetch:load', { state: 'data', data: data }) })
           .catch((err) => { this.dispatcher.emit('item:fetch:load', { state: 'error', error: err }) })
         dispatcher.emit('item:fetch:load', { state: 'pending' })
+
+        promisify(getItem(), this.dispatcher, 'item:fetch:load')
       },
 
       'item:fetch:load': (state, result) => {
         return { ...state, ...result }
       }
     })
+
+### bindActions
+
+> `bindActions()`
+
+unpacks the old observed things
 
 ### dispatcher
 
@@ -103,7 +111,7 @@ Unbinds a given change handler.
 
 ### observe
 
-> `observe(actions)`
+> `observe(actions, options)`
 
 Listens to events in the dispatcher.
 
@@ -118,12 +126,42 @@ Listens to events in the dispatcher.
 
 binds actions object `actions` to a `dispatcher`.
 
+### extend
+
+> `extend(proto)`
+
+Adds methods to the store object.
+
+    let store = new Store(...)
+    store.extend({
+      helperMethod () {
+        return true
+      }
+    })
+
+    store.helperMethod() //=> true
+
+### dup
+
+> `dup(dispatcher)`
+
+Duplicates the store, listening to a new dispatcher. Great for unit
+testing.
+
+    let store = new Store(...)
+
+    let dispatcher = new Dispatcher()
+    let newStore = store.dup(dispatcher)
+
+    dispatch.emit('event')
+    // ...will only be received by newStore
+
 ### resetState
 
 > `resetState(state)`
 
-Resets the state to the new given `state`. This should almost never be
-used except perhaps in unit tests.
+Resets the state to the new given `state`. This should never be used
+except perhaps in unit tests.
 
     store.resetState({ count: 0 })
 
