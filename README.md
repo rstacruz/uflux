@@ -139,11 +139,13 @@ App.emit('list:clear')
 
 See [API.md](API.md) for full API documentation.
 
-Unresolved API issues:
+Unresolved API questions:
 
- * testing stores?
- * atomicity?
- * components listening to dispatch events?
+ * should we allow naming stores? this'd be a great way to make a global "save state" for your entire app
+ * atomicity - is it possible?
+ * can/should components listen to dispatch events?
+ * is there a better function signature for new Store()?
+ * ...post yours in [issues/](issues/)
 
 ## Disclaimer
 
