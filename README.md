@@ -98,7 +98,7 @@ const ListView = React.createClass({
 ListView = connectToStores(ListView)
 ```
 
-## Chaining events
+### Chaining events
 
 You can emit events inside handlers. They will be fired after committing the new state to the store.
 
@@ -119,6 +119,20 @@ App.on('list:error', function (err) {
   console.log(err.message) //=> "List is locked"
   console.log(ListStore.getState().error.message) //=> "List is locked"
 })
+```
+
+### Testing stores
+
+Create unit tests for stores by duplicating it and assigning it to a new dispatcher via `.dup()`.
+
+```js
+const ListStore = new Store(...)
+
+const App = new Dispatcher()
+const TestListStore = ListStore.dup(App)
+
+App.emit('list:clear')
+// ...will only be received by TestListStore, not ListStore.
 ```
 
 ## API
