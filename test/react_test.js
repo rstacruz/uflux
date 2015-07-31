@@ -13,17 +13,17 @@ describe('React', function () {
   it('works', function () {
     d = new Dispatcher()
 
-    s = new Store(d, { name: 'John' }, {
-      'name:set': function (state, name) {
+    s = new Store(d, {
+      name: 'John'
+    }, {
+      'name:set': (state, name) => {
         return { ...state, name: name }
       }
     })
 
     let View = React.createClass({
       statics: {
-        getStores () {
-          return [s]
-        },
+        getStores: () => [s]
       },
 
       render () {

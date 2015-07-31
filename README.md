@@ -1,20 +1,21 @@
-fluxm
+uflux
 =====
 
-Extremely minimalistic flux-like implementation. Inspired by alt, flummox, redux, and the rest of them.
+Another implementation for the Flux architecture for React apps that pushes minimalism far.
 
-* No actions
-* No constants
+* Reduced verbosity: no action constants, no action methods. To fire a method, just emit a signal from the disptacher.
 * Store works with immutable
 * Stor
 
 ### Require
 
 ```js
-import { Dispatcher, Store, connectToStores } from 'flux-m'
+import { Dispatcher, Store, connectToStores } from 'uflux'
 ```
 
 ### Dispatcher
+
+A disptacher is simply an [EventEmitter].
 
 ```js
 const App = new Dispatcher()
@@ -24,11 +25,18 @@ App.emit('eventname')
 App.emit('eventname', arg1, arg2)
 ```
 
+[EventEmitter]: http://devdocs.io/iojs/events#events_class_events_eventemitter
+
 ### Store
 
+A store is an object that keeps a state and listens to dispatcher events.
+Create a new store using `new Store(dispatcher, initialState, handlers)`.
+
+Each handler is a pure function that takes in the `state` and returns the new
+state—no mutation should be done here.
+
 ```js
-const ListStore = new Store(App,
-{
+const ListStore = new Store(App, {
   items: []
 }, {
   'list:add': function (state, item) {
@@ -45,13 +53,16 @@ ListStore.getState() /* { items: [2] } */
 
 ### Actions
 
-No actions, just emit directly on your main dispatcher.
+To fire an action, just emit directly on your main dispatcher. No need for action methods.
 
 ```js
 App.emit('list:add')
 ```
 
 ### React
+
+You can connect a react Component to a store using `connectToStores()`. The
+state of the store will be available as properties (`this.props`).
 
 ```js
 const ListView = React.createClass({

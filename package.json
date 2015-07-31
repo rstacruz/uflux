@@ -1,12 +1,12 @@
 {
-  "name": "flux-m",
+  "name": "uflux",
   "version": "0.0.1",
   "description": "",
   "main": "lib/index.js",
   "browser": "dist/index.js",
   "scripts": {
     "test": "mocha",
-    "build": "browserify -t [ babelify --stage 0 ] --node --no-bundle-external -s Fluxm lib/index.js -o dist/index.js",
+    "build": "browserify -t [ babelify --stage 0 ] --node --no-bundle-external -s uflux lib/index.js -o dist/index.js",
     "prepublish": "npm run build"
   },
   "author": "Rico Sta. Cruz <rico@ricostacruz.com>",
