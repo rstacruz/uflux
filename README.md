@@ -1,7 +1,6 @@
-uflux
-=====
+# μflux
 
-Another implementation for the Flux architecture for React apps that pushes minimalism far.
+**uflux** - Another implementation for the Flux architecture for React apps that pushes minimalism far.
 
 * Store works with immutable objects
 * Unidirectional flow
@@ -12,7 +11,9 @@ But also:
 
 See [API.md](API.md) for full API documentation.
 
-### Require
+[![Status](https://travis-ci.org/rstacruz/uflux.svg?branch=master)](https://travis-ci.org/rstacruz/uflux "See test builds")
+
+## Usage
 
 ```js
 import { Dispatcher, Store, connectToStores } from 'uflux'
