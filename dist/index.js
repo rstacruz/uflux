@@ -1,4 +1,5 @@
 (function(f){if(typeof exports==="object"&&typeof module!=="undefined"){module.exports=f()}else if(typeof define==="function"&&define.amd){define([],f)}else{var g;if(typeof window!=="undefined"){g=window}else if(typeof global!=="undefined"){g=global}else if(typeof self!=="undefined"){g=self}else{g=this}g.uflux = f()}})(function(){var define,module,exports;return (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
+(function (global){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -13,15 +14,17 @@ exports.Dispatcher = Dispatcher;
 exports.Store = Store;
 exports.connectToStores = connectToStores;
 
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
-
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
 
 function _inherits(subClass, superClass) { if (typeof superClass !== 'function' && superClass !== null) { throw new TypeError('Super expression must either be null or a function, not ' + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
 var _events = require('events');
 
-var _react = require('react');
+if (global.React) {
+  React = global.React;
+} else {
+  React = require('react');
+}
 
 /**
  * Dispatcher : new Dispatcher()
@@ -35,8 +38,6 @@ var _react = require('react');
  *
  *     app.emit('build:finish', 384)
  */
-
-var _react2 = _interopRequireDefault(_react);
 
 function Dispatcher() {}
 
@@ -322,7 +323,7 @@ function connectToStores(Spec) {
       };
     }
 
-    var StoreConnection = _react2['default'].createClass({
+    var StoreConnection = React.createClass({
       displayName: 'StoreConnection',
 
       getInitialState: function getInitialState() {
@@ -356,7 +357,7 @@ function connectToStores(Spec) {
       },
 
       render: function render() {
-        return _react2['default'].createElement(Component, _extends({}, this.props, this.state));
+        return React.createElement(Component, _extends({}, this.props, this.state));
       }
     });
 
@@ -364,6 +365,7 @@ function connectToStores(Spec) {
   })();
 }
 
+}).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
 },{"events":2,"react":undefined}],2:[function(require,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
