@@ -1,5 +1,5 @@
 /* global describe, it, expect, beforeEach */
-import { Dispatcher, Store } from '../lib'
+import { Dispatcher, Store } from '../../lib'
 let d, s
 
 describe('Dispatcher', function () {

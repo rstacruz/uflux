@@ -1,5 +1,5 @@
 /* global describe, it, expect, beforeEach */
-import { Dispatcher, Store, connectToStores } from '../lib'
+import { Dispatcher, Store, connectToStores } from '../../lib'
 import React from 'react'
 let d, s, div
 
