@@ -91,7 +91,7 @@ ListView = connectToStores(ListView)
 
 ## Chaining events
 
-You can emit events inside handlers. They will be fired after committing the new state to the event store.
+You can emit events inside handlers. They will be fired after committing the new state to the store.
 
 ```js
 const ListStore = new Store(App, {
