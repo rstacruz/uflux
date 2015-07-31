@@ -1,4 +1,4 @@
-(function(f){if(typeof exports==="object"&&typeof module!=="undefined"){module.exports=f()}else if(typeof define==="function"&&define.amd){define([],f)}else{var g;if(typeof window!=="undefined"){g=window}else if(typeof global!=="undefined"){g=global}else if(typeof self!=="undefined"){g=self}else{g=this}g.Fluxm = f()}})(function(){var define,module,exports;return (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
+(function(f){if(typeof exports==="object"&&typeof module!=="undefined"){module.exports=f()}else if(typeof define==="function"&&define.amd){define([],f)}else{var g;if(typeof window!=="undefined"){g=window}else if(typeof global!=="undefined"){g=global}else if(typeof self!=="undefined"){g=self}else{g=this}g.uflux = f()}})(function(){var define,module,exports;return (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -18,7 +18,16 @@ var _events = require('events');
 var _react = require('react');
 
 /**
- * (Class) Dispatcher.
+ * Dispatcher : new Dispatcher()
+ * (Class) An event emitter used to dispatch application events.
+ *
+ *     app = new Dispatcher()
+ *
+ *     app.on('build:finish', function (duration) {
+ *       console.log('build finished, took ' + duration + 'ms')
+ *     })
+ *
+ *     app.emit('build:finish', 384)
  */
 
 var _react2 = _interopRequireDefault(_react);
@@ -26,6 +35,24 @@ var _react2 = _interopRequireDefault(_react);
 function Dispatcher() {}
 
 Dispatcher.prototype = _extends({}, _events.EventEmitter.prototype, {
+
+  /**
+   * on : on(event, callback)
+   * Listens to an event.
+   * See [EventEmitter.on](http://devdocs.io/iojs/events#events_emitter_on_event_listener).
+   */
+
+  /**
+   * off : off(event, callback)
+   * Unbinds an event listener.
+   * See [EventEmitter.off](http://devdocs.io/iojs/events#events_emitter_off_event_listener).
+   */
+
+  /**
+   * emit : emit(event, [args...])
+   * Fires an event.
+   * See [EventEmitter.emit](http://devdocs.io/iojs/events#events_emitter_emit_event_listener).
+   */
 
   /**
    * Queues up event emissions.
@@ -54,8 +81,26 @@ Dispatcher.prototype = _extends({}, _events.EventEmitter.prototype, {
   }
 });
 
-/*
- * (Class) Store.
+/**
+ * Store : new Store(dispatcher, state, actions)
+ * (Class) A store is an object that keeps a state and listens to dispatcher events.
+ *
+ * Each action handler is a pure function that takes in the `state` and returns the new
+ * state—no mutation should be done here.
+ *
+ *     let store = new Store(dispatcher, {
+ *     }, {
+ *       'item:fetch': (state) => {
+ *         getItem()
+ *           .then((data) => { dispatcher.emit('item:fetch:load', { state: 'data', data: data }) })
+ *           .catch((err) => { dispatcher.emit('item:fetch:load', { state: 'error', error: err }) })
+ *         dispatcher.emit('item:fetch:load', { state: 'pending' })
+ *       },
+ *
+ *       'item:fetch:load': (state, result) => {
+ *         return { ...state, ...result }
+ *       }
+ *     })
  */
 
 function Store(dispatcher, state, actions) {
@@ -72,17 +117,49 @@ function Store(dispatcher, state, actions) {
 
 Store.prototype = _extends({}, _events.EventEmitter.prototype, {
 
+  /**
+   * Returns the current state of the store.
+   *
+   *     store.getState()
+   */
+
   getState: function getState() {
     return this.state;
   },
+
+  /**
+   * Listens for changes, firing the function `fn` when it happens.
+   *
+   *     store.listen(function (state) {
+   *       console.log('State changed:', state)
+   *     })
+   */
 
   listen: function listen(fn) {
     return this.on('change', fn);
   },
 
+  /**
+   * Unbinds a given change handler.
+   *
+   *     function onChange () { ... }
+   *
+   *     store.listen(onChange)
+   *     store.unlisten(onChange)
+   */
+
   unlisten: function unlisten(fn) {
     return this.off('change', fn);
   },
+
+  /**
+   * Listens to events in the dispatcher.
+   *
+   *     store.observe({
+   *       'list:add': function (state) { ... },
+   *       'list:remove': function (state) { ... }
+   *     })
+   */
 
   observe: function observe(actions) {
     var _this2 = this;
@@ -94,29 +171,52 @@ Store.prototype = _extends({}, _events.EventEmitter.prototype, {
         }
 
         _this2.dispatcher.wait(function () {
-          _this2.state = actions[key].apply(actions, [_this2.state].concat(args));
-          _this2.emit('change', _this2.state);
+          var result = actions[key].apply(actions, [_this2.state].concat(args));
+          if (result) {
+            _this2.state = result;
+            _this2.emit('change', _this2.state);
+          }
         });
       });
     });
   }
 });
 
-/*
- * Connects to stores
+/**
+ * Utilities:
+ * (Module) Some helper functions.
+ */
+
+/**
+ * Connects a React Component to a store. It makes the store's state available as properties.
  *
- * Based on https://github.com/goatslacker/alt/blob/master/src/utils/connectToStores.js
+ * It takes the static function `getStores()` and connects to those stores. You
+ * may also provide a `getPropsFromStores()` method.
+ *
+ *     let Component = React.createClass({
+ *       statics: {
+ *         getStores () { return [store] }
+ *       }
+ *     })
+ *
+ *     Component = connectToStores(Component)
+ *
+ * Based on the [alt implementation](https://github.com/goatslacker/alt/blob/master/src/utils/connectToStores.js).
  */
 
 function connectToStores(Spec) {
   var Component = arguments.length <= 1 || arguments[1] === undefined ? Spec : arguments[1];
   return (function () {
-    if (!Spec.getPropsFromStores) {
-      throw new Error('connectToStores(): ' + 'expected getPropsFromStores() static function');
-    }
-
     if (!Spec.getStores) {
       throw new Error('connectToStores(): ' + 'expected getStores() static function');
+    }
+
+    if (!Spec.getPropsFromStores) {
+      Spec.getPropsFromStores = function () {
+        return Spec.getStores().reduce(function (output, store) {
+          return _extends({}, output, store.getState());
+        }, {});
+      };
     }
 
     var StoreConnection = _react2['default'].createClass({

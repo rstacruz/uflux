@@ -1,8 +1,37 @@
 ## Dispatcher
 
-> `Dispatcher()`
+> `new Dispatcher()`
 
-Dispatcher.
+An event emitter used to dispatch application events.
+
+    app = new Dispatcher()
+
+    app.on('build:finish', function (duration) {
+      console.log('build finished, took ' + duration + 'ms')
+    })
+
+    app.emit('build:finish', 384)
+
+### on
+
+> `on(event, callback)`
+
+Listens to an event.
+See [EventEmitter.on](http://devdocs.io/iojs/events#events_emitter_on_event_listener).
+
+### off
+
+> `off(event, callback)`
+
+Unbinds an event listener.
+See [EventEmitter.off](http://devdocs.io/iojs/events#events_emitter_off_event_listener).
+
+### emit
+
+> `emit(event, [args...])`
+
+Fires an event.
+See [EventEmitter.emit](http://devdocs.io/iojs/events#events_emitter_emit_event_listener).
 
 ### wait
 
@@ -12,12 +41,11 @@ Queues up event emissions.
 
 ## Store
 
-> `Store(dispatcher, state, actions)`
+> `new Store(dispatcher, state, actions)`
 
 A store is an object that keeps a state and listens to dispatcher events.
-Create a new store using `new Store(dispatcher, initialState, handlers)`.
 
-Each handler is a pure function that takes in the `state` and returns the new
+Each action handler is a pure function that takes in the `state` and returns the new
 state—no mutation should be done here.
 
     let store = new Store(dispatcher, {
@@ -39,6 +67,8 @@ state—no mutation should be done here.
 > `getState()`
 
 Returns the current state of the store.
+
+    store.getState()
 
 ### listen
 
