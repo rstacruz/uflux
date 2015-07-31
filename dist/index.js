@@ -92,8 +92,8 @@ Dispatcher.prototype = _extends({}, _events.EventEmitter.prototype, {
  *     }, {
  *       'item:fetch': (state) => {
  *         getItem()
- *           .then((data) => { dispatcher.emit('item:fetch:load', { state: 'data', data: data }) })
- *           .catch((err) => { dispatcher.emit('item:fetch:load', { state: 'error', error: err }) })
+ *           .then((data) => { this.dispatcher.emit('item:fetch:load', { state: 'data', data: data }) })
+ *           .catch((err) => { this.dispatcher.emit('item:fetch:load', { state: 'error', error: err }) })
  *         dispatcher.emit('item:fetch:load', { state: 'pending' })
  *       },
  *
@@ -116,6 +116,17 @@ function Store(dispatcher, state, actions) {
 }
 
 Store.prototype = _extends({}, _events.EventEmitter.prototype, {
+
+  /**
+   * dispatcher:
+   * A reference to the dispatcher.
+   *
+   *     {
+   *       'list:add': (state) => {
+   *         this.dispatcher.emit('list:add:error', 'Not allowed')
+   *       }
+   *     }
+   */
 
   /**
    * Returns the current state of the store.
@@ -162,17 +173,25 @@ Store.prototype = _extends({}, _events.EventEmitter.prototype, {
    */
 
   observe: function observe(actions) {
+    this.bindToDispatcher(actions, this.dispatcher);
+  },
+
+  /**
+   * Private: binds actions object `actions` to a `dispatcher`.
+   */
+
+  bindToDispatcher: function bindToDispatcher(actions, dispatcher) {
     var _this2 = this;
 
     Object.keys(actions).forEach(function (key) {
       var fn = actions[key];
-      _this2.dispatcher.on(key, function () {
+      dispatcher.on(key, function () {
         for (var _len2 = arguments.length, args = Array(_len2), _key2 = 0; _key2 < _len2; _key2++) {
           args[_key2] = arguments[_key2];
         }
 
-        _this2.dispatcher.wait(function () {
-          var result = fn.apply(undefined, [_this2.state].concat(args));
+        dispatcher.wait(function () {
+          var result = fn.apply(_this2, [_this2.getState()].concat(args));
           if (result) _this2.resetState(result);
         });
       });

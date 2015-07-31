@@ -52,8 +52,8 @@ state—no mutation should be done here.
     }, {
       'item:fetch': (state) => {
         getItem()
-          .then((data) => { dispatcher.emit('item:fetch:load', { state: 'data', data: data }) })
-          .catch((err) => { dispatcher.emit('item:fetch:load', { state: 'error', error: err }) })
+          .then((data) => { this.dispatcher.emit('item:fetch:load', { state: 'data', data: data }) })
+          .catch((err) => { this.dispatcher.emit('item:fetch:load', { state: 'error', error: err }) })
         dispatcher.emit('item:fetch:load', { state: 'pending' })
       },
 
@@ -61,6 +61,16 @@ state—no mutation should be done here.
         return { ...state, ...result }
       }
     })
+
+### dispatcher
+
+A reference to the dispatcher.
+
+    {
+      'list:add': (state) => {
+        this.dispatcher.emit('list:add:error', 'Not allowed')
+      }
+    }
 
 ### getState
 
@@ -101,6 +111,12 @@ Listens to events in the dispatcher.
       'list:add': function (state) { ... },
       'list:remove': function (state) { ... }
     })
+
+### bindToDispatcher
+
+> `bindToDispatcher(actions, dispatcher)`
+
+binds actions object `actions` to a `dispatcher`.
 
 ### resetState
 
