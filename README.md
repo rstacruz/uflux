@@ -3,9 +3,14 @@ uflux
 
 Another implementation for the Flux architecture for React apps that pushes minimalism far.
 
-* Reduced verbosity: no action constants, no action methods. To fire a method, just emit a signal from the disptacher.
-* Store works with immutable
-* Stor
+* Store works with immutable objects
+* Unidirectional flow
+
+But also:
+
+* Reduced verbosity. no action constants, no action methods. To fire a method, just emit a signal from the disptacher.
+
+See [API.md](API.md) for full API documentation.
 
 ### Require
 
@@ -106,6 +111,10 @@ App.on('list:error', function (err) {
   console.log(ListStore.getState().error.message) //=> "List is locked"
 })
 ```
+
+## API
+
+See [API.md](API.md) for full API documentation.
 
 ## Disclaimer
 
