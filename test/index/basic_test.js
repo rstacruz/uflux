@@ -98,4 +98,21 @@ describe('Store', function () {
     d.emit('1st-event')
     expect(s.getState().ids).toEqual([ 1, 2 ])
   })
+
+  describe('subclass', function () {
+    it('has .constructor', function () {
+      expect(s.constructor).toBeA('function')
+    })
+
+    it('has a __super__', function () {
+      expect(s.constructor.__super__).toEqual(Store)
+    })
+  })
+
+  describe('.extend()', function () {
+    it('works', function () {
+      s.extend({ hi () { return 'hello' } })
+      expect(s.hi()).toEqual('hello')
+    })
+  })
 })
