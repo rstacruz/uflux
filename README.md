@@ -83,3 +83,30 @@ const ListView = React.createClass({
 
 ListView = connectToStores(ListView)
 ```
+
+## Chaining events
+
+You can emit events inside handlers. They will be fired after committing the new state to the event store.
+
+```js
+const ListStore = new Store(App, {
+  items: []
+}, {
+  'list:add': function (state, item) {
+    if (state.locked) {
+      const err = new Error('List is locked')
+      App.emit('list:error', err)
+      return { ...state, error: err }
+    }
+  }
+})
+
+App.on('list:error', function (err) {
+  console.log(err.message) //=> "List is locked"
+  console.log(ListStore.getState().error.message) //=> "List is locked"
+})
+```
+
+## Disclaimer
+
+This is built as a proof-of-concept and has not been battle-tested in a production setup.
