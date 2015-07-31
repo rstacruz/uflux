@@ -165,20 +165,30 @@ Store.prototype = _extends({}, _events.EventEmitter.prototype, {
     var _this2 = this;
 
     Object.keys(actions).forEach(function (key) {
+      var fn = actions[key];
       _this2.dispatcher.on(key, function () {
         for (var _len2 = arguments.length, args = Array(_len2), _key2 = 0; _key2 < _len2; _key2++) {
           args[_key2] = arguments[_key2];
         }
 
         _this2.dispatcher.wait(function () {
-          var result = actions[key].apply(actions, [_this2.state].concat(args));
-          if (result) {
-            _this2.state = result;
-            _this2.emit('change', _this2.state);
-          }
+          var result = fn.apply(undefined, [_this2.state].concat(args));
+          if (result) _this2.resetState(result);
         });
       });
     });
+  },
+
+  /**
+   * Resets the state to the new given `state`. This should almost never be
+   * used except perhaps in unit tests.
+   *
+   *     store.resetState({ count: 0 })
+   */
+
+  resetState: function resetState(state) {
+    this.state = state;
+    this.emit('change', state);
   }
 });
 

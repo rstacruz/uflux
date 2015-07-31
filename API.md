@@ -102,6 +102,15 @@ Listens to events in the dispatcher.
       'list:remove': function (state) { ... }
     })
 
+### resetState
+
+> `resetState(state)`
+
+Resets the state to the new given `state`. This should almost never be
+used except perhaps in unit tests.
+
+    store.resetState({ count: 0 })
+
 ## Utilities
 
 Some helper functions.
