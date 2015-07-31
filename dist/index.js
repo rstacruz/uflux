@@ -195,7 +195,8 @@ Store.prototype = _extends({}, _events.EventEmitter.prototype, {
  *
  *     let Component = React.createClass({
  *       statics: {
- *         getStores () { return [store] }
+ *         getStores () { return [store] },
+ *         getPropsFromStores (stores) { return stores[0].data }
  *       }
  *     })
  *

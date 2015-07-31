@@ -117,7 +117,8 @@ may also provide a `getPropsFromStores()` method.
 
     let Component = React.createClass({
       statics: {
-        getStores () { return [store] }
+        getStores () { return [store] },
+        getPropsFromStores (stores) { return stores[0].data }
       }
     })
 
