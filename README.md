@@ -129,7 +129,7 @@ Unresolved API issues:
 
  * testing stores?
  * atomicity?
- * letting stores consume an event before components?
+ * components listening to dispatch events?
 
 ## Disclaimer
 
