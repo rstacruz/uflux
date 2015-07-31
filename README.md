@@ -19,6 +19,12 @@ See [API.md](API.md) for full API documentation.
 import { Dispatcher, Store, connectToStores } from 'uflux'
 ```
 
+Your application will be composed of:
+
+* One and only one Dispatcher singleton.
+* Many stores (singletons), each listening to the one Dispatcher.
+* Many React components, with some listening to changes to one or more stores.
+
 ### Dispatcher
 
 A disptacher is simply an [EventEmitter].
@@ -37,6 +43,8 @@ App.emit('eventname', arg1, arg2)
 
 A store is an object that keeps a state and listens to dispatcher events.
 Create a new store using `new Store(dispatcher, initialState, handlers)`.
+
+It listens to events from the dispatcher and responds by updating the store's state.
 
 Each handler is a pure function that takes in the `state` and returns the new
 state—no mutation should be done here.
@@ -116,6 +124,12 @@ App.on('list:error', function (err) {
 ## API
 
 See [API.md](API.md) for full API documentation.
+
+Unresolved API issues:
+
+ * testing stores?
+ * atomicity?
+ * letting stores consume an event before components?
 
 ## Disclaimer
 
