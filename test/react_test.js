@@ -1,7 +1,7 @@
-/* global describe, it, expect */
+/* global describe, it, expect, beforeEach */
 import { Dispatcher, Store, connectToStores } from '../lib'
 import React from 'react'
-let d, s, el, str, div
+let d, s, div
 
 describe('React', function () {
   require('mocha-jsdom')()
@@ -22,6 +22,9 @@ describe('React', function () {
     })
 
     let View = React.createClass({
+      propTypes: {
+        name: React.PropTypes.string
+      },
       statics: {
         getStores: () => [s]
       },
