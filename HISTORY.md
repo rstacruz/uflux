@@ -1,3 +1,9 @@
+## [v0.3.0] - Jul 31, 2015
+
+* Allow usage in the browser without precompilation (`dist/index.js`).
+
+[v0.3.0]: https://github.com/rstacruz/uflux/compare/v0.2.0...v0.3.0
+
 ## [v0.2.0] - Jul 31, 2015
 
 * Implement `Store.dup()` to allow testing stores.
