@@ -21,33 +21,13 @@ When used via npm/bower/browserify/webpack/etc:
 import { Dispatcher, Store, connectToStores } from 'uflux'
 ```
 
+### Composition
+
 Your application will be composed of:
 
 * One and only one Dispatcher singleton.
 * Many stores (singletons), each listening to the one Dispatcher.
 * Many React components, with some listening to changes to one or more stores.
-
-### Regular usage
-
-Without module loaders, replace `{version}` with the latest version (eg, `v0.3.0`):
-
-```html
-<script src="https://cdn.rawgit.com/rstacruz/uflux/{version}/dist/index.js"></script>
-```
-
-```js
-var Store = window.uflux.Store
-var Dispatcher = window.uflux.Dispatcher
-var connectToStores = window.uflux.connectToStores
-```
-
-### Babel
-
-Using [Babel] is recommended for JSX parsing and enabling ES2015 features.
-`--stage 0` is recommended, too, for rest spreading support (`{ ...state, active:
-  true }`)—a feature very useful for Stores.
-
-[Babel]: https://babeljs.io
 
 ### Dispatcher
 
@@ -159,6 +139,8 @@ App.emit('list:clear')
 // ...will only be received by TestListStore, not ListStore.
 ```
 
+<br>
+
 ## API
 
 See [API.md](API.md) for full API documentation.
@@ -173,9 +155,35 @@ Unresolved API questions:
  * it should be possible to debounce store change events (eg, a chain of dispatch events that modify stores). but how?
  * ...post yours in [issues/](issues/)
 
+<br>
+
+## Extra notes
+
+### Regular usage
+
+> [](#version) `<script src="https://cdn.rawgit.com/rstacruz/uflux/v0.3.0/dist/index.js"></script>`
+
+```js
+var Store = window.uflux.Store
+var Dispatcher = window.uflux.Dispatcher
+var connectToStores = window.uflux.connectToStores
+```
+
+### Babel
+
+Using [Babel] is recommended for JSX parsing and enabling ES2015 features.
+`--stage 0` is recommended, too, for rest spreading support (`{ ...state, active:
+  true }`)—a feature very useful for Stores.
+
+[Babel]: https://babeljs.io
+
+<br>
+
 ## Disclaimer
 
 This is built as a proof-of-concept and has not been battle-tested in a production setup.
+
+<br>
 
 ## Thanks
 
