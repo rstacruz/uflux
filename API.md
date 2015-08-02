@@ -14,28 +14,28 @@ An event emitter used to dispatch application events.
 
 ### on
 
-> `on(event, callback)`
+> `on(event: string, callback())`
 
 Listens to an event.
 See [EventEmitter.on](http://devdocs.io/iojs/events#events_emitter_on_event_listener).
 
 ### off
 
-> `off(event, callback)`
+> `off(event: string, callback)`
 
 Unbinds an event listener.
 See [EventEmitter.off](http://devdocs.io/iojs/events#events_emitter_off_event_listener).
 
 ### emit
 
-> `emit(event, [...args])`
+> `emit(event: string, [...args])`
 
 Fires an event.
 See [EventEmitter.emit](http://devdocs.io/iojs/events#events_emitter_emit_event_listener).
 
 ### afterEmit
 
-> `afterEmit([key], callback())`
+> `afterEmit([key: string], callback())`
 
 Runs something after emitting. If `key` is specified, it will ensure that
 there will only be one function for that key to be called.
@@ -58,7 +58,7 @@ Queues up event emissions.
 
 ## Store
 
-> `new Store(dispatcher, state, actions)`
+> `new Store(dispatcher: Dispatcher, state, actions: Object)`
 
 A store is an object that keeps a state and listens to dispatcher events.
 
@@ -83,11 +83,15 @@ state—no mutation should be done here.
 
 ### id
 
+> `id: String`
+
 A unique string ID for the instance.
 
     store.id //=> 's43'
 
 ### dispatcher
+
+> `dispatcher: String`
 
 A reference to the dispatcher.
 
@@ -107,9 +111,10 @@ Returns the current state of the store.
 
 ### listen
 
-> `listen(fn)`
+> `listen(callback(state))`
 
-Listens for changes, firing the function `fn` when it happens.
+Listens for changes, firing the function `callback` when it happens. The
+current state is passed onto the callback as the argument `state`.
 
     store.listen(function (state) {
       console.log('State changed:', state)
@@ -128,7 +133,7 @@ Unbinds a given change handler.
 
 ### observe
 
-> `observe(actions, options)`
+> `observe(actions: Object, [options: Object])`
 
 Listens to events in the dispatcher.
 
@@ -139,7 +144,7 @@ Listens to events in the dispatcher.
 
 ### extend
 
-> `extend(proto)`
+> `extend(proto: Object)`
 
 Adds methods to the store object.
 
@@ -154,7 +159,7 @@ Adds methods to the store object.
 
 ### dup
 
-> `dup(dispatcher)`
+> `dup(dispatcher: Dispatcher)`
 
 Duplicates the store, listening to a new dispatcher. Great for unit
 testing.
@@ -169,7 +174,7 @@ testing.
 
 ### resetState
 
-> `resetState(state)`
+> `resetState(state: Object)`
 
 Resets the state to the new given `state`. This should never be used
 except perhaps in unit tests.

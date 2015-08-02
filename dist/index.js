@@ -55,19 +55,19 @@ function Dispatcher() {
 Dispatcher.prototype = _extends({}, _events.EventEmitter.prototype, {
 
   /**
-   * on : on(event, callback)
+   * on : on(event: string, callback())
    * Listens to an event.
    * See [EventEmitter.on](http://devdocs.io/iojs/events#events_emitter_on_event_listener).
    */
 
   /**
-   * off : off(event, callback)
+   * off : off(event: string, callback)
    * Unbinds an event listener.
    * See [EventEmitter.off](http://devdocs.io/iojs/events#events_emitter_off_event_listener).
    */
 
   /**
-   * emit : emit(event, [...args])
+   * emit : emit(event: string, [...args])
    * Fires an event.
    * See [EventEmitter.emit](http://devdocs.io/iojs/events#events_emitter_emit_event_listener).
    */
@@ -101,7 +101,7 @@ Dispatcher.prototype = _extends({}, _events.EventEmitter.prototype, {
   },
 
   /**
-   * afterEmit : afterEmit([key], callback())
+   * afterEmit : afterEmit([key: string], callback())
    * Runs something after emitting. If `key` is specified, it will ensure that
    * there will only be one function for that key to be called.
    *
@@ -175,7 +175,7 @@ Dispatcher.prototype = _extends({}, _events.EventEmitter.prototype, {
 });
 
 /**
- * Store : new Store(dispatcher, state, actions)
+ * Store : new Store(dispatcher: Dispatcher, state, actions: Object)
  * (Class) A store is an object that keeps a state and listens to dispatcher events.
  *
  * Each action handler is a pure function that takes in the `state` and returns the new
@@ -222,7 +222,7 @@ function Store(dispatcher, state, actions) {
 Store.prototype = _extends({}, _events.EventEmitter.prototype, {
 
   /**
-   * id:
+   * id : id: String
    * A unique string ID for the instance.
    *
    *     store.id //=> 's43'
@@ -241,7 +241,7 @@ Store.prototype = _extends({}, _events.EventEmitter.prototype, {
   },
 
   /**
-   * dispatcher:
+   * dispatcher : dispatcher: String
    * A reference to the dispatcher.
    *
    *     {
@@ -262,7 +262,9 @@ Store.prototype = _extends({}, _events.EventEmitter.prototype, {
   },
 
   /**
-   * Listens for changes, firing the function `fn` when it happens.
+   * listen : listen(callback(state))
+   * Listens for changes, firing the function `callback` when it happens. The
+   * current state is passed onto the callback as the argument `state`.
    *
    *     store.listen(function (state) {
    *       console.log('State changed:', state)
@@ -287,6 +289,7 @@ Store.prototype = _extends({}, _events.EventEmitter.prototype, {
   },
 
   /**
+   * observe : observe(actions: Object, [options: Object])
    * Listens to events in the dispatcher.
    *
    *     store.observe({
