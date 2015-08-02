@@ -40,7 +40,7 @@
   "scripts": {
     "build": "npm run build-dist && npm run build-docs",
     "build-dist": "browserify -t [ babelify --stage 0 --optional spec.protoToAssign --loose es6.classes ] -u react -s uflux lib/index.js -o dist/index.js",
-    "build-docs": "mdx lib/index.js -f markdown > API.md",
+    "build-docs": "mdx lib/index.js -x private -f markdown > API.md",
     "prepublish": "npm run build",
     "test": "mocha",
     "coverage": "istanbul cover _mocha -- -R spec test/index/*.js"
