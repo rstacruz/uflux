@@ -15,6 +15,8 @@ See [API.md](API.md) for full API documentation.
 
 ## Usage
 
+When used via npm/bower/browserify/webpack/etc:
+
 ```js
 import { Dispatcher, Store, connectToStores } from 'uflux'
 ```
@@ -24,6 +26,28 @@ Your application will be composed of:
 * One and only one Dispatcher singleton.
 * Many stores (singletons), each listening to the one Dispatcher.
 * Many React components, with some listening to changes to one or more stores.
+
+### Regular usage
+
+Without module loaders, replace `{version}` with the latest version (eg, `v0.3.0`):
+
+```html
+<script src="https://cdn.rawgit.com/rstacruz/uflux/{version}/dist/index.js"></script>
+```
+
+```js
+var Store = window.uflux.Store
+var Dispatcher = window.uflux.Dispatcher
+var connectToStores = window.uflux.connectToStores
+```
+
+### Babel
+
+Using [Babel] is recommended for JSX parsing and enabling ES2015 features.
+`--stage 0` is recommended, too, for rest spreading support (`{ ...state, active:
+  true }`)—a feature very useful for Stores.
+
+[Babel]: https://babeljs.io
 
 ### Dispatcher
 
