@@ -30,6 +30,40 @@ describe('Dispatcher', function () {
   })
 })
 
+describe('Dispatcher.emitDepth', function () {
+  beforeEach(function () {
+    d = new Dispatcher()
+  })
+
+  it('emitDepth = 0', function () {
+    d.on('one', function () { })
+    d.emit('one')
+    expect(d.emitDepth).toEqual(0)
+  })
+
+  it('emitDepth = 1', function (next) {
+    d.on('one', function () {
+      expect(d.emitDepth).toEqual(1)
+      next()
+    })
+
+    d.emit('one')
+  })
+
+  it('emitDepth = 2', function (next) {
+    d.on('one', function () {
+      d.emit('two')
+    })
+
+    d.on('two', function () {
+      expect(d.emitDepth).toEqual(2)
+      next()
+    })
+
+    d.emit('one')
+  })
+})
+
 describe('Dispatcher.wait()', function () {
   beforeEach(function () {
     d = new Dispatcher()
