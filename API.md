@@ -28,10 +28,39 @@ See [EventEmitter.off](http://devdocs.io/iojs/events#events_emitter_off_event_li
 
 ### emit
 
-> `emit(event, [args...])`
+> `emit(event, [...args])`
 
 Fires an event.
 See [EventEmitter.emit](http://devdocs.io/iojs/events#events_emitter_emit_event_listener).
+
+### emitWrap
+
+> `emitWrap(fn)`
+
+calls `fn` taking emitDepth into account.
+
+### afterEmit
+
+> `afterEmit([key], callback())`
+
+Runs something after emitting. If `key` is specified, it will ensure that
+there will only be one function for that key to be called.
+
+    store.afterEmit(function () {
+      // this will be called after emissions are complete
+    })
+
+### runAfterEmit
+
+> `runAfterEmit()`
+
+runs the afterEmit hooks. Done after an emit()
+
+### isEmitting
+
+> `isEmitting()`
+
+Returns `true` if the event emitter is in the middle of emitting an event.
 
 ### wait
 
@@ -64,11 +93,17 @@ state—no mutation should be done here.
       }
     })
 
+### id
+
+A unique string ID for the instance.
+
+    store.id //=> 's43'
+
 ### bindActions
 
 > `bindActions()`
 
-unpacks the old observed things
+unpacks the old observed things.
 
 ### dispatcher
 

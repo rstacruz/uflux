@@ -1,3 +1,9 @@
+## [v0.5.0]
+
+* Add `Store#id` as a unique identifier for stores.
+
+[v0.5.0]: https://github.com/rstacruz/uflux/compare/v0.5.0...v0.4.0
+
 ## [v0.4.0]
 > Aug  3, 2015
 

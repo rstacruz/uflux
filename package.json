@@ -1,7 +1,7 @@
 {
   "name": "uflux",
   "description": "Minimal flux implementation",
-  "version": "0.3.0",
+  "version": "0.5.0",
   "author": "Rico Sta. Cruz <rico@ricostacruz.com>",
   "bugs": {
     "url": "https://github.com/rstacruz/uflux/issues"

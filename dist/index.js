@@ -12,6 +12,8 @@ exports.Dispatcher = Dispatcher;
 exports.Store = Store;
 exports.connectToStores = connectToStores;
 
+function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) arr2[i] = arr[i]; return arr2; } else { return Array.from(arr); } }
+
 function _defaults(obj, defaults) { var keys = Object.getOwnPropertyNames(defaults); for (var i = 0; i < keys.length; i++) { var key = keys[i]; var value = Object.getOwnPropertyDescriptor(defaults, key); if (value && value.configurable && obj[key] === undefined) { Object.defineProperty(obj, key, value); } } return obj; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
@@ -28,6 +30,11 @@ if (global.React) {
   React = require('react');
 }
 
+var ids = {
+  storeInstance: 0,
+  callback: 0
+};
+
 /**
  * Dispatcher : new Dispatcher()
  * (Class) An event emitter used to dispatch application events.
@@ -41,7 +48,9 @@ if (global.React) {
  *     app.emit('build:finish', 384)
  */
 
-function Dispatcher() {}
+function Dispatcher() {
+  this.emitDepth = 0;
+}
 
 Dispatcher.prototype = _extends({}, _events.EventEmitter.prototype, {
 
@@ -58,32 +67,107 @@ Dispatcher.prototype = _extends({}, _events.EventEmitter.prototype, {
    */
 
   /**
-   * emit : emit(event, [args...])
+   * emit : emit(event, [...args])
    * Fires an event.
    * See [EventEmitter.emit](http://devdocs.io/iojs/events#events_emitter_emit_event_listener).
    */
+
+  emit: function emit(event) {
+    var _this = this;
+
+    for (var _len = arguments.length, args = Array(_len > 1 ? _len - 1 : 0), _key = 1; _key < _len; _key++) {
+      args[_key - 1] = arguments[_key];
+    }
+
+    return this.emitWrap(function () {
+      var _EventEmitter$prototype$emit;
+
+      return (_EventEmitter$prototype$emit = _events.EventEmitter.prototype.emit).call.apply(_EventEmitter$prototype$emit, [_this, event].concat(args));
+    });
+  },
+
+  /*
+   * Private: calls `fn` taking emitDepth into account.
+   */
+
+  emitWrap: function emitWrap(fn) {
+    try {
+      this.emitDepth++;
+      return fn.call(this);
+    } finally {
+      this.emitDepth--;
+      if (this.emitDepth === 0) this.runAfterEmit();
+    }
+  },
+
+  /**
+   * afterEmit : afterEmit([key], callback())
+   * Runs something after emitting. If `key` is specified, it will ensure that
+   * there will only be one function for that key to be called.
+   *
+   *     store.afterEmit(function () {
+   *       // this will be called after emissions are complete
+   *     })
+   */
+
+  afterEmit: function afterEmit(key, callback) {
+    if (key === undefined) key = null;
+
+    if (!this._afterEmit) this._afterEmit = {};
+    if (!key) key = '' + ids.callback++;
+    this._afterEmit[key] = callback;
+  },
+
+  /*
+   * Private: runs the afterEmit hooks. Done after an emit()
+   */
+
+  runAfterEmit: function runAfterEmit() {
+    var _this2 = this;
+
+    if (!this._afterEmit) return;
+    Object.keys(this._afterEmit).forEach(function (key) {
+      var callback = _this2._afterEmit[key];
+      callback.call(_this2);
+    });
+
+    delete this._afterEmit;
+  },
+
+  /**
+   * isEmitting : isEmitting()
+   * Returns `true` if the event emitter is in the middle of emitting an event.
+   */
+
+  isEmitting: function isEmitting() {
+    return this.emitDepth > 0;
+  },
 
   /**
    * Queues up event emissions.
    */
 
   wait: function wait(fn) {
-    var _this = this;
+    var _this3 = this;
 
     var emit = this.emit;
     var queue = [];
     try {
       this.emit = function () {
-        for (var _len = arguments.length, args = Array(_len), _key = 0; _key < _len; _key++) {
-          args[_key] = arguments[_key];
+        for (var _len2 = arguments.length, args = Array(_len2), _key2 = 0; _key2 < _len2; _key2++) {
+          args[_key2] = arguments[_key2];
         }
 
-        queue.push(args);
+        return _this3.emitWrap(function () {
+          queue.push(args);
+        });
       };
       fn.call(this);
     } finally {
       queue.forEach(function (args) {
-        emit.apply(_this, args);
+        var _EventEmitter$prototype$emit2;
+
+        (_EventEmitter$prototype$emit2 = _events.EventEmitter.prototype.emit).call.apply(_EventEmitter$prototype$emit2, [_this3].concat(_toConsumableArray(args)));
       });
       this.emit = emit;
     }
@@ -124,6 +208,7 @@ function Store(dispatcher, state, actions) {
 
       _Store.call(this);
       this.dispatcher = dispatcher;
+      this.id = 's' + ids.storeInstance++;
       this.bindActions();
     }
 
@@ -137,14 +222,21 @@ function Store(dispatcher, state, actions) {
 Store.prototype = _extends({}, _events.EventEmitter.prototype, {
 
   /**
-   * Private: unpacks the old observed things
+   * id:
+   * A unique string ID for the instance.
+   *
+   *     store.id //=> 's43'
+   */
+
+  /*
+   * Private: unpacks the old observed things.
    */
 
   bindActions: function bindActions() {
-    var _this2 = this;
+    var _this4 = this;
 
     this.actionsList.forEach(function (actions) {
-      _this2.observe(actions, { record: false });
+      _this4.observe(actions, { record: false });
     });
   },
 
@@ -212,23 +304,23 @@ Store.prototype = _extends({}, _events.EventEmitter.prototype, {
     }
   },
 
-  /**
+  /*
    * Private: binds actions object `actions` to a `dispatcher`.
    */
 
   bindToDispatcher: function bindToDispatcher(actions, dispatcher) {
-    var _this3 = this;
+    var _this5 = this;
 
     Object.keys(actions).forEach(function (key) {
       var fn = actions[key];
       dispatcher.on(key, function () {
-        for (var _len2 = arguments.length, args = Array(_len2), _key2 = 0; _key2 < _len2; _key2++) {
-          args[_key2] = arguments[_key2];
+        for (var _len3 = arguments.length, args = Array(_len3), _key3 = 0; _key3 < _len3; _key3++) {
+          args[_key3] = arguments[_key3];
         }
 
         dispatcher.wait(function () {
-          var result = fn.apply(_this3, [_this3.getState()].concat(args));
-          if (result) _this3.resetState(result);
+          var result = fn.apply(_this5, [_this5.getState()].concat(args));
+          if (result) _this5.resetState(result);
         });
       });
     });
@@ -248,10 +340,10 @@ Store.prototype = _extends({}, _events.EventEmitter.prototype, {
    */
 
   extend: function extend(proto) {
-    var _this4 = this;
+    var _this6 = this;
 
     Object.keys(proto).forEach(function (key) {
-      _this4.constructor.prototype[key] = proto[key];
+      _this6.constructor.prototype[key] = proto[key];
     });
     return this;
   },
@@ -282,8 +374,12 @@ Store.prototype = _extends({}, _events.EventEmitter.prototype, {
    */
 
   resetState: function resetState(state) {
+    var _this7 = this;
+
     this.state = state;
-    this.emit('change', state);
+    this.dispatcher.afterEmit(this.id, function () {
+      _this7.emit('change', state);
+    });
   }
 });
 
@@ -337,11 +433,11 @@ function connectToStores(Spec) {
       },
 
       componentDidMount: function componentDidMount() {
-        var _this5 = this;
+        var _this8 = this;
 
         var stores = Spec.getStores(this.props, this.context);
         this.storeListeners = stores.map(function (store) {
-          return store.listen(_this5.onChange);
+          return store.listen(_this8.onChange);
         });
         if (Spec.componentDidConnect) {
           Spec.componentDidConnect(this.props, this.context);
