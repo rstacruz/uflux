@@ -51,14 +51,38 @@ describe('Dispatcher.emitDepth', function () {
   })
 
   it('emitDepth = 2', function (next) {
-    d.on('one', function () {
-      d.emit('two')
-    })
+    d.on('one', () => { d.emit('two') })
 
     d.on('two', function () {
       expect(d.emitDepth).toEqual(2)
       next()
     })
+
+    d.emit('one')
+  })
+
+  it('afterEmit()', function (next) {
+    d.afterEmit('lol', function () {
+      expect(d.emitDepth).toEqual(0)
+      next()
+    })
+
+    d.on('one', () => { d.emit('two') })
+    d.on('two', () => { })
+
+    d.emit('one')
+  })
+
+  it('duplicate afterEmit()', function (next) {
+    [1, 2, 3, 4, 5].forEach(() => {
+      d.afterEmit('lol', function () {
+        expect(d.emitDepth).toEqual(0)
+        next()
+      })
+    })
+
+    d.on('one', () => { d.emit('two') })
+    d.on('two', () => { })
 
     d.emit('one')
   })
@@ -110,11 +134,26 @@ describe('Store', function () {
     expect(s.getState().ids).toEqual([ 1, 2 ])
   })
 
-  it('emits a change event', function () {
+  it('emits a change event', function (next) {
     s.listen(function (state) {
       expect(state).toEqual({ name: 'store', ids: [ 1 ]})
+      next()
     })
     d.emit('list:push', 1)
+  })
+
+  it('change events are debounced', function (next) {
+    s.listen(function (state) {
+      expect(state).toEqual(3)
+      next()
+    })
+    s.observe({
+      'one': (state) => { d.emit('two'); return 1 },
+      'two': (state) => { d.emit('tri'); return 2 },
+      'tri': (state) => { return 3 }
+    })
+
+    d.emit('one')
   })
 
   it('waits', function () {
