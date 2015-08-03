@@ -72,46 +72,32 @@ describe('Dispatcher.emitDepth', function () {
 
     d.emit('one')
   })
-
-  it('duplicate afterEmit()', function (next) {
-    [1, 2, 3, 4, 5].forEach(() => {
-      d.afterEmit('lol', function () {
-        expect(d.emitDepth).toEqual(0)
-        next()
-      })
-    })
-
-    d.on('one', () => { d.emit('two') })
-    d.on('two', () => { })
-
-    d.emit('one')
-  })
 })
 
-describe('Dispatcher.wait()', function () {
-  beforeEach(function () {
-    d = new Dispatcher()
-  })
+// describe('Dispatcher.wait()', function () {
+//   beforeEach(function () {
+//     d = new Dispatcher()
+//   })
 
-  it('.wait() yields', function () {
-    var emissions = []
-    d.on('myevent', (msg) => { emissions.push(msg) })
-    d.wait(() => { d.emit('myevent', 2) })
-    expect(emissions).toEqual([2])
-  })
+//   it('.wait() yields', function () {
+//     var emissions = []
+//     d.on('myevent', (msg) => { emissions.push(msg) })
+//     d.wait(() => { d.emit('myevent', 2) })
+//     expect(emissions).toEqual([2])
+//   })
 
-  it('.wait() works', function () {
-    var emissions = []
-    d.on('myevent', () => {
-      emissions.push(2)
-    })
-    d.wait(() => {
-      d.emit('myevent')
-      emissions.push(1)
-    })
-    expect(emissions).toEqual([1, 2])
-  })
-})
+//   it('.wait() works', function () {
+//     var emissions = []
+//     d.on('myevent', () => {
+//       emissions.push(2)
+//     })
+//     d.wait(() => {
+//       d.emit('myevent')
+//       emissions.push(1)
+//     })
+//     expect(emissions).toEqual([1, 2])
+//   })
+// })
 
 describe('Store', function () {
   beforeEach(function () {
@@ -142,14 +128,27 @@ describe('Store', function () {
     d.emit('list:push', 1)
   })
 
-  it('change events are debounced', function (next) {
+  it('change events are debounced (with 2)', function (next) {
+    s.listen(function (state) {
+      expect(state).toEqual(2)
+      next()
+    })
+    s.observe({
+      'one': (state) => { d.emitAfter('two'); return 1 },
+      'two': (state) => { return 2 }
+    })
+
+    d.emit('one')
+  })
+
+  it('change events are debounced (with 3)', function (next) {
     s.listen(function (state) {
       expect(state).toEqual(3)
       next()
     })
     s.observe({
-      'one': (state) => { d.emit('two'); return 1 },
-      'two': (state) => { d.emit('tri'); return 2 },
+      'one': (state) => { d.emitAfter('two'); return 1 },
+      'two': (state) => { d.emitAfter('tri'); return 2 },
       'tri': (state) => { return 3 }
     })
 
@@ -159,7 +158,7 @@ describe('Store', function () {
   it('waits', function () {
     s.observe({
       '1st-event': function (state) {
-        d.emit('2nd-event')
+        d.afterEmit(() => { d.emit('2nd-event') })
         return { ...state, ids: state.ids.concat([ 1 ]) }
       },
 

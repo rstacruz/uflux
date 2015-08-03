@@ -10,7 +10,7 @@ describe('React', function () {
     div = document.createElement('div')
   })
 
-  it('works', function () {
+  it('works', function (next) {
     d = new Dispatcher()
 
     s = new Store(d, {
@@ -39,6 +39,9 @@ describe('React', function () {
     React.render(<View />, div)
     expect(div.textContent).toInclude('hi John')
     d.emit('name:set', 'Jane')
-    expect(div.textContent).toInclude('hi Jane')
+    setTimeout(function () {
+      expect(div.textContent).toInclude('hi Jane')
+      next()
+    })
   })
 })
