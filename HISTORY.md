@@ -1,3 +1,12 @@
+## v0.6.0
+
+Rework the API. Major breaking change.
+
+* Deprecated: `Dispatcher#wait()` was removed.
+* Deprecated: Emitting dispatcher events in stores will now execute them immediately instead of waiting for changes.
+* Implement `Dispatcher#emitAfter()` to make emits that are at the end of the event stack.
+* Rename afterEmit() to `Dispatcher#defer()`
+
 ## [v0.5.0]
 
 * Add `Store#id` as a unique identifier for stores.

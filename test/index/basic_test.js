@@ -61,8 +61,8 @@ describe('Dispatcher.emitDepth', function () {
     d.emit('one')
   })
 
-  it('afterEmit()', function (next) {
-    d.afterEmit('lol', function () {
+  it('defer()', function (next) {
+    d.defer('lol', function () {
       expect(d.emitDepth).toEqual(0)
       next()
     })
@@ -158,7 +158,7 @@ describe('Store', function () {
   it('waits', function () {
     s.observe({
       '1st-event': function (state) {
-        d.afterEmit(() => { d.emit('2nd-event') })
+        d.emitAfter('2nd-event')
         return { ...state, ids: state.ids.concat([ 1 ]) }
       },
 
