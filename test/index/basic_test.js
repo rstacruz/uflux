@@ -62,7 +62,7 @@ describe('Dispatcher.emitDepth', function () {
   })
 
   it('defer()', function (next) {
-    d.defer('lol', function () {
+    d.defer(function () {
       expect(d.emitDepth).toEqual(0)
       next()
     })
