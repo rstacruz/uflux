@@ -1,4 +1,5 @@
 ## v0.6.0
+> Aug  4, 2015
 
 Rework the API. Major breaking change.
 
@@ -6,12 +7,16 @@ Rework the API. Major breaking change.
 * Deprecated: Emitting dispatcher events in stores will now execute them immediately instead of waiting for changes.
 * Implement `Dispatcher#emitAfter()` to make emits that are at the end of the event stack.
 * Rename afterEmit() to `Dispatcher#defer()`
+* `Dispatcher#defer()` now doesn't take a key argument.
+
+[v0.6.0]: https://github.com/rstacruz/uflux/compare/v0.5.0...v0.6.0
 
 ## [v0.5.0]
+> Aug  3, 2015
 
 * Add `Store#id` as a unique identifier for stores.
 
-[v0.5.0]: https://github.com/rstacruz/uflux/compare/v0.5.0...v0.4.0
+[v0.5.0]: https://github.com/rstacruz/uflux/compare/v0.4.0...v0.5.0
 
 ## [v0.4.0]
 > Aug  3, 2015
