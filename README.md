@@ -77,6 +77,12 @@ To fire an action, just emit directly on your main dispatcher. No need for actio
 App.emit('list:add')
 ```
 
+If you're firing within an event listener (such as in a store), you can use `emitAfter()` to make the event trigger after all other events have triggered.
+
+```js
+App.emitAfter('list:refresh')
+```
+
 ### React
 
 You can connect a react Component to a store using `connectToStores()`. The
