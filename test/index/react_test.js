@@ -39,9 +39,7 @@ describe('React', function () {
     React.render(<View />, div)
     expect(div.textContent).toInclude('hi John')
     d.emit('name:set', 'Jane')
-    setTimeout(function () {
-      expect(div.textContent).toInclude('hi Jane')
-      next()
-    })
+    expect(div.textContent).toInclude('hi Jane')
+    next()
   })
 })
