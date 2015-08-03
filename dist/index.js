@@ -88,7 +88,7 @@ Dispatcher.prototype = _extends({}, _events.EventEmitter.prototype, {
   },
 
   /**
-   * emit : emit(event: string, [...args])
+   * emitAfter : emitAfter(event: string, [...args])
    * Emits an event after the current event stack has finished. If ran outside
    * an event handler, the event will be triggered immediately instead.
    *

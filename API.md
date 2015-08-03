@@ -33,9 +33,9 @@ See [EventEmitter.off](http://devdocs.io/iojs/events#events_emitter_off_event_li
 Fires an event.
 See [EventEmitter.emit](http://devdocs.io/iojs/events#events_emitter_emit_event_listener).
 
-### emit
+### emitAfter
 
-> `emit(event: string, [...args])`
+> `emitAfter(event: string, [...args])`
 
 Emits an event after the current event stack has finished. If ran outside
 an event handler, the event will be triggered immediately instead.
