@@ -14,8 +14,6 @@ exports.Dispatcher = Dispatcher;
 exports.Store = Store;
 exports.connectToStores = connectToStores;
 
-function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) arr2[i] = arr[i]; return arr2; } else { return Array.from(arr); } }
-
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
 
 function _inherits(subClass, superClass) { if (typeof superClass !== 'function' && superClass !== null) { throw new TypeError('Super expression must either be null or a function, not ' + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
@@ -73,65 +71,87 @@ Dispatcher.prototype = _extends({}, _events.EventEmitter.prototype, {
    */
 
   emit: function emit(event) {
-    var _this = this;
-
-    for (var _len = arguments.length, args = Array(_len > 1 ? _len - 1 : 0), _key = 1; _key < _len; _key++) {
-      args[_key - 1] = arguments[_key];
-    }
-
-    return this.emitWrap(function () {
+    try {
       var _EventEmitter$prototype$emit;
 
-      return (_EventEmitter$prototype$emit = _events.EventEmitter.prototype.emit).call.apply(_EventEmitter$prototype$emit, [_this, event].concat(args));
-    });
-  },
-
-  /*
-   * Private: calls `fn` taking emitDepth into account.
-   */
-
-  emitWrap: function emitWrap(fn) {
-    try {
       this.emitDepth++;
-      return fn.call(this);
+
+      for (var _len = arguments.length, args = Array(_len > 1 ? _len - 1 : 0), _key = 1; _key < _len; _key++) {
+        args[_key - 1] = arguments[_key];
+      }
+
+      return (_EventEmitter$prototype$emit = _events.EventEmitter.prototype.emit).call.apply(_EventEmitter$prototype$emit, [this, event].concat(args));
     } finally {
       this.emitDepth--;
-      if (this.emitDepth === 0) this.runAfterEmit();
+      if (this.emitDepth === 0) this.runDeferred();
     }
   },
 
   /**
-   * afterEmit : afterEmit([key: string], callback())
+   * emit : emit(event: string, [...args])
+   * Emits an event after the current event stack has finished. If ran outside
+   * an event handler, the event will be triggered immediately instead.
+   *
+   *     dispatcher.on('tweets:load', function () {
+   *       dispatcher.emitAfter('tweets:refresh')
+   *       // 1
+   *     })
+   *
+   *     dispatcher.on('tweets:refresh', function () {
+   *       // 2
+   *     })
+   *
+   *     // in this case, `2` will run before `1`
+   */
+
+  emitAfter: function emitAfter(event) {
+    var _this = this;
+
+    for (var _len2 = arguments.length, args = Array(_len2 > 1 ? _len2 - 1 : 0), _key2 = 1; _key2 < _len2; _key2++) {
+      args[_key2 - 1] = arguments[_key2];
+    }
+
+    if (this.isEmitting()) {
+      return this.defer(function () {
+        return _this.emit.apply(_this, [event].concat(args));
+      });
+    } else {
+      return this.emit.apply(this, [event].concat(args));
+    }
+  },
+
+  /**
+   * defer : defer([key: string], callback())
    * Runs something after emitting. If `key` is specified, it will ensure that
    * there will only be one function for that key to be called.
    *
-   *     store.afterEmit(function () {
+   *     store.defer(function () {
    *       // this will be called after emissions are complete
    *     })
    */
 
-  afterEmit: function afterEmit(key, callback) {
-    if (key === undefined) key = null;
-
-    if (!this._afterEmit) this._afterEmit = {};
-    if (!key) key = '' + ids.callback++;
-    this._afterEmit[key] = callback;
+  defer: function defer(callback) {
+    if (this.isEmitting()) {
+      if (!this._defer) this._defer = [];
+      return this._defer.push(callback);
+    } else {
+      return callback.call(this);
+    }
   },
 
   /*
-   * Private: runs the afterEmit hooks. Done after an emit()
+   * Private: runs the defer hooks. Done after an emit()
    */
 
-  runAfterEmit: function runAfterEmit() {
+  runDeferred: function runDeferred() {
     var _this2 = this;
 
-    if (!this._afterEmit) return;
-    Object.keys(this._afterEmit).forEach(function (key) {
-      var callback = _this2._afterEmit[key];
+    var list = this._defer;
+    if (!list) return;
+    delete this._defer;
+    list.forEach(function (callback) {
       callback.call(_this2);
     });
-
-    delete this._afterEmit;
   },
 
   /**
@@ -141,36 +161,6 @@ Dispatcher.prototype = _extends({}, _events.EventEmitter.prototype, {
 
   isEmitting: function isEmitting() {
     return this.emitDepth > 0;
-  },
-
-  /**
-   * Queues up event emissions.
-   */
-
-  wait: function wait(fn) {
-    var _this3 = this;
-
-    var emit = this.emit;
-    var queue = [];
-    try {
-      this.emit = function () {
-        for (var _len2 = arguments.length, args = Array(_len2), _key2 = 0; _key2 < _len2; _key2++) {
-          args[_key2] = arguments[_key2];
-        }
-
-        return _this3.emitWrap(function () {
-          queue.push(args);
-        });
-      };
-      fn.call(this);
-    } finally {
-      queue.forEach(function (args) {
-        var _EventEmitter$prototype$emit2;
-
-        (_EventEmitter$prototype$emit2 = _events.EventEmitter.prototype.emit).call.apply(_EventEmitter$prototype$emit2, [_this3].concat(_toConsumableArray(args)));
-      });
-      this.emit = emit;
-    }
   }
 });
 
@@ -208,7 +198,7 @@ function Store(dispatcher, state, actions) {
 
       _get(Object.getPrototypeOf(NewStore.prototype), 'constructor', this).call(this);
       this.dispatcher = dispatcher;
-      this.id = 's' + ids.storeInstance++;
+      this.id = 'store' + ids.storeInstance++;
       this.bindActions();
     }
 
@@ -233,10 +223,10 @@ Store.prototype = _extends({}, _events.EventEmitter.prototype, {
    */
 
   bindActions: function bindActions() {
-    var _this4 = this;
+    var _this3 = this;
 
     this.actionsList.forEach(function (actions) {
-      _this4.observe(actions, { record: false });
+      _this3.observe(actions, { record: false });
     });
   },
 
@@ -312,7 +302,7 @@ Store.prototype = _extends({}, _events.EventEmitter.prototype, {
    */
 
   bindToDispatcher: function bindToDispatcher(actions, dispatcher) {
-    var _this5 = this;
+    var _this4 = this;
 
     Object.keys(actions).forEach(function (key) {
       var fn = actions[key];
@@ -321,10 +311,8 @@ Store.prototype = _extends({}, _events.EventEmitter.prototype, {
           args[_key3] = arguments[_key3];
         }
 
-        dispatcher.wait(function () {
-          var result = fn.apply(_this5, [_this5.getState()].concat(args));
-          if (result) _this5.resetState(result);
-        });
+        var result = fn.apply(_this4, [_this4.getState()].concat(args));
+        if (result) _this4.resetState(result);
       });
     });
   },
@@ -343,10 +331,10 @@ Store.prototype = _extends({}, _events.EventEmitter.prototype, {
    */
 
   extend: function extend(proto) {
-    var _this6 = this;
+    var _this5 = this;
 
     Object.keys(proto).forEach(function (key) {
-      _this6.constructor.prototype[key] = proto[key];
+      _this5.constructor.prototype[key] = proto[key];
     });
     return this;
   },
@@ -377,11 +365,19 @@ Store.prototype = _extends({}, _events.EventEmitter.prototype, {
    */
 
   resetState: function resetState(state) {
-    var _this7 = this;
+    var _this6 = this;
 
     this.state = state;
-    this.dispatcher.afterEmit(this.id, function () {
-      _this7.emit('change', state);
+    this.dirty = true;
+
+    // Use defer twice to make sure it's at the end of all stacks
+    this.dispatcher.defer(function () {
+      _this6.dispatcher.defer(function () {
+        if (_this6.dirty) {
+          delete _this6.dirty;
+          _this6.emit('change', state);
+        }
+      });
     });
   }
 });
@@ -436,11 +432,11 @@ function connectToStores(Spec) {
       },
 
       componentDidMount: function componentDidMount() {
-        var _this8 = this;
+        var _this7 = this;
 
         var stores = Spec.getStores(this.props, this.context);
         this.storeListeners = stores.map(function (store) {
-          return store.listen(_this8.onChange);
+          return store.listen(_this7.onChange);
         });
         if (Spec.componentDidConnect) {
           Spec.componentDidConnect(this.props, this.context);

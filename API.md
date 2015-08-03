@@ -33,14 +33,32 @@ See [EventEmitter.off](http://devdocs.io/iojs/events#events_emitter_off_event_li
 Fires an event.
 See [EventEmitter.emit](http://devdocs.io/iojs/events#events_emitter_emit_event_listener).
 
-### afterEmit
+### emit
 
-> `afterEmit([key: string], callback())`
+> `emit(event: string, [...args])`
+
+Emits an event after the current event stack has finished. If ran outside
+an event handler, the event will be triggered immediately instead.
+
+    dispatcher.on('tweets:load', function () {
+      dispatcher.emitAfter('tweets:refresh')
+      // 1
+    })
+
+    dispatcher.on('tweets:refresh', function () {
+      // 2
+    })
+
+    // in this case, `2` will run before `1`
+
+### defer
+
+> `defer([key: string], callback())`
 
 Runs something after emitting. If `key` is specified, it will ensure that
 there will only be one function for that key to be called.
 
-    store.afterEmit(function () {
+    store.defer(function () {
       // this will be called after emissions are complete
     })
 
@@ -49,12 +67,6 @@ there will only be one function for that key to be called.
 > `isEmitting()`
 
 Returns `true` if the event emitter is in the middle of emitting an event.
-
-### wait
-
-> `wait(fn)`
-
-Queues up event emissions.
 
 ## Store
 
