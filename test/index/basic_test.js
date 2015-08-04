@@ -1,8 +1,15 @@
-/* global describe, it, expect, beforeEach */
-import { Dispatcher, Store } from '../../lib'
+/* global describe, it, expect, beforeEach, before */
+let jsdom = require('mocha-jsdom')
+let Dispatcher, Store
 let d, s
 
 describe('Dispatcher', function () {
+  before(function () {
+    let uflux = jsdom.rerequire('../../lib')
+    Dispatcher = uflux.Dispatcher
+    Store = uflux.Store
+  })
+
   beforeEach(function () {
     d = new Dispatcher()
   })

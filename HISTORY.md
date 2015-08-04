@@ -1,3 +1,9 @@
+## v0.8.0
+
+* Fix unmounting
+* Fix `Dispatcher#off()`
+* Fix `Store#unlisten()`
+
 ## [v0.7.0]
 > Aug  4, 2015
 
