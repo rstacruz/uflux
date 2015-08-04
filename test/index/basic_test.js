@@ -124,15 +124,22 @@ describe('Store', function () {
     s.listen(function (state) {
       expect(state).toEqual({ name: 'store', ids: [ 1 ]})
       next()
-    })
+    }, { immediate: false })
     d.emit('list:push', 1)
+  })
+
+  it('listen() files immediately', function (next) {
+    s.listen(function (state) {
+      expect(state).toBeA('object')
+      next()
+    })
   })
 
   it('change events are debounced (with 2)', function (next) {
     s.listen(function (state) {
       expect(state).toEqual(2)
       next()
-    })
+    }, { immediate: false })
     s.observe({
       'one': (state) => { d.emitAfter('two'); return 1 },
       'two': (state) => { return 2 }
@@ -145,7 +152,7 @@ describe('Store', function () {
     s.listen(function (state) {
       expect(state).toEqual(3)
       next()
-    })
+    }, { immediate: false })
     s.observe({
       'one': (state) => { d.emitAfter('two'); return 1 },
       'two': (state) => { d.emitAfter('tri'); return 2 },
