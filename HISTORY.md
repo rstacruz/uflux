@@ -1,8 +1,11 @@
-## v0.8.0
+## [v0.8.0]
+> Aug  4, 2015
 
 * Fix unmounting
 * Fix `Dispatcher#off()`
 * Fix `Store#unlisten()`
+
+[v0.8.0]: https://github.com/rstacruz/uflux/compare/v0.7.0...v0.8.0
 
 ## [v0.7.0]
 > Aug  4, 2015

@@ -61,8 +61,16 @@ Dispatcher.prototype = _extends({}, _events.EventEmitter.prototype, {
   /**
    * off : off(event: string, callback)
    * Unbinds an event listener.
-   * See [EventEmitter.off](http://devdocs.io/iojs/events#events_emitter_off_event_listener).
+   * See [EventEmitter.removeListener](http://devdocs.io/iojs/events#events_emitter_removelistener_event_listener).
    */
+
+  off: function off(event) {
+    for (var _len = arguments.length, args = Array(_len > 1 ? _len - 1 : 0), _key = 1; _key < _len; _key++) {
+      args[_key - 1] = arguments[_key];
+    }
+
+    this.removeListener.apply(this, [event].concat(args));
+  },
 
   /**
    * emit : emit(event: string, [...args])
@@ -76,8 +84,8 @@ Dispatcher.prototype = _extends({}, _events.EventEmitter.prototype, {
 
       this.emitDepth++;
 
-      for (var _len = arguments.length, args = Array(_len > 1 ? _len - 1 : 0), _key = 1; _key < _len; _key++) {
-        args[_key - 1] = arguments[_key];
+      for (var _len2 = arguments.length, args = Array(_len2 > 1 ? _len2 - 1 : 0), _key2 = 1; _key2 < _len2; _key2++) {
+        args[_key2 - 1] = arguments[_key2];
       }
 
       return (_EventEmitter$prototype$emit = _events.EventEmitter.prototype.emit).call.apply(_EventEmitter$prototype$emit, [this, event].concat(args));
@@ -107,8 +115,8 @@ Dispatcher.prototype = _extends({}, _events.EventEmitter.prototype, {
   emitAfter: function emitAfter(event) {
     var _this = this;
 
-    for (var _len2 = arguments.length, args = Array(_len2 > 1 ? _len2 - 1 : 0), _key2 = 1; _key2 < _len2; _key2++) {
-      args[_key2 - 1] = arguments[_key2];
+    for (var _len3 = arguments.length, args = Array(_len3 > 1 ? _len3 - 1 : 0), _key3 = 1; _key3 < _len3; _key3++) {
+      args[_key3 - 1] = arguments[_key3];
     }
 
     if (this.isEmitting()) {
@@ -283,7 +291,7 @@ Store.prototype = _extends({}, _events.EventEmitter.prototype, {
    */
 
   unlisten: function unlisten(fn) {
-    return this.off('change', fn);
+    return this.removeListener('change', fn);
   },
 
   /**
@@ -315,8 +323,8 @@ Store.prototype = _extends({}, _events.EventEmitter.prototype, {
     Object.keys(actions).forEach(function (key) {
       var fn = actions[key];
       dispatcher.on(key, function () {
-        for (var _len3 = arguments.length, args = Array(_len3), _key3 = 0; _key3 < _len3; _key3++) {
-          args[_key3] = arguments[_key3];
+        for (var _len4 = arguments.length, args = Array(_len4), _key4 = 0; _key4 < _len4; _key4++) {
+          args[_key4] = arguments[_key4];
         }
 
         var result = fn.apply(_this4, [_this4.getState()].concat(args));
@@ -452,8 +460,11 @@ function connectToStores(Spec) {
       },
 
       componentWillUnmount: function componentWillUnmount() {
-        this.storeListeners.forEach(function (unlisten) {
-          return unlisten();
+        var _this8 = this;
+
+        var stores = Spec.getStores(this.props, this.context);
+        stores.forEach(function (store) {
+          store.unlisten(_this8.onChange);
         });
       },
 

@@ -172,7 +172,7 @@ Unresolved API questions:
 
 ### Regular usage
 
-> [](#version) `<script src="https://cdn.rawgit.com/rstacruz/uflux/v0.7.0/dist/index.js"></script>`
+> [](#version) `<script src="https://cdn.rawgit.com/rstacruz/uflux/v0.8.0/dist/index.js"></script>`
 
 ```js
 var Store = window.uflux.Store

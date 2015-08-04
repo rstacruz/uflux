@@ -24,7 +24,7 @@ See [EventEmitter.on](http://devdocs.io/iojs/events#events_emitter_on_event_list
 > `off(event: string, callback)`
 
 Unbinds an event listener.
-See [EventEmitter.off](http://devdocs.io/iojs/events#events_emitter_off_event_listener).
+See [EventEmitter.removeListener](http://devdocs.io/iojs/events#events_emitter_removelistener_event_listener).
 
 ### emit
 
