@@ -123,7 +123,7 @@ Returns the current state of the store.
 
 ### listen
 
-> `listen(callback(state))`
+> `listen(callback(state), [{ immediate }])`
 
 Listens for changes, firing the function `callback` when it happens. The
 current state is passed onto the callback as the argument `state`.
@@ -131,6 +131,13 @@ current state is passed onto the callback as the argument `state`.
     store.listen(function (state) {
       console.log('State changed:', state)
     })
+
+The callback will be immediately invoked when you call `listen()`. To
+disable this behavior, pass `{ immediate: false }`.
+
+    store.listen(function (state) {
+      // ...
+    }, { immediate: false })
 
 ### unlisten
 

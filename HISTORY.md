@@ -1,4 +1,11 @@
-## v0.6.0
+## [v0.7.0]
+> Aug  4, 2015
+
+* `Store#listen()` is now fired immediately.
+
+[v0.7.0]: https://github.com/rstacruz/uflux/compare/v0.6.0...v0.7.0
+
+## [v0.6.0]
 > Aug  4, 2015
 
 Rework the API. Major breaking change.
