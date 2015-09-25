@@ -1,3 +1,7 @@
+> **Deprecated** — use [redux](https://www.npmjs.com/package/redux) instead; it works pretty much just like uflux and is better supported.
+
+----
+
 # μflux
 
 **uflux** - Another implementation for the Flux architecture for React apps that pushes minimalism far.
